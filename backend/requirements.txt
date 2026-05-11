@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+torch
+transformers
+safetensors
+pydantic
+python-multipart
+sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+email-validator

@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.env
+
+# Node
+node_modules/
+web/node_modules/
+dist/
+build/
+.vite/
+
+# Dataset / cache
+data/
+*.arrow
+*.parquet
+*.zip
+.cache/
+.huggingface/
+
+# Model checkpoints
+backend/models/
+models/
+checkpoints/
+outputs/
+results/
+runs/
+wandb/
+
+# OS / editor
+.vscode/
+.DS_Store
