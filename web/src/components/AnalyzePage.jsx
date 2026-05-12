@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { predictAll } from "../api/predictApi";
 import { downloadJson } from "../utils/downloadJson";
 import CodeInput from "./CodeInput";
@@ -6,7 +6,6 @@ import HistorySidebar from "./HistorySidebar";
 import LanguageSelect from "./LanguageSelect";
 import PredictionCard from "./PredictionCard";
 
-const HISTORY_KEY = "analyze_history";
 const DOWNLOAD_FORMATS = [
   { value: "json", label: ".json" },
   { value: "doc", label: ".doc" },
@@ -22,9 +21,13 @@ function createId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function readSavedHistory() {
+function createHistoryKey(user) {
+  return user?.username ? `analyze_history_${user.username}` : "analyze_history";
+}
+
+function readSavedHistory(historyKey) {
   try {
-    const savedHistory = localStorage.getItem(HISTORY_KEY);
+    const savedHistory = localStorage.getItem(historyKey);
 
     if (!savedHistory) {
       return [];
@@ -135,23 +138,20 @@ function createPdfReport(result) {
   return pdf;
 }
 
-export default function AnalyzePage() {
+export default function AnalyzePage({ currentUser, onLogout }) {
+  const historyKey = createHistoryKey(currentUser);
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [result, setResult] = useState(null);
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState(() => readSavedHistory(historyKey));
   const [downloadFormat, setDownloadFormat] = useState("json");
   const [rawJsonVisible, setRawJsonVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    setHistory(readSavedHistory());
-  }, []);
-
   function saveHistory(newHistory) {
     setHistory(newHistory);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(newHistory));
+    localStorage.setItem(historyKey, JSON.stringify(newHistory));
   }
 
   function addHistoryItem(data) {
@@ -249,6 +249,12 @@ export default function AnalyzePage() {
         <header className="header">
           <div>
             <h1>AI Code Detector</h1>
+            <div className="user-bar">
+              <span>{currentUser?.username}</span>
+              <button type="button" onClick={onLogout}>
+                Logout
+              </button>
+            </div>
           </div>
         </header>
 
