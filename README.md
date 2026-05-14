@@ -93,70 +93,72 @@ backend/models/unixcoder_subtask_c/best_model
 - Python 3.11 or newer
 - Node.js 20 or newer
 - npm
+- MongoDB server with the `mongod` command available
+- `mongosh`
+- `gnome-terminal`
+- `xdg-open`
 - Local model files under `backend/models/`
 
-## Backend Setup
+## Setup And Run
 
-From the repository root:
+From the repository root, run:
+
+```bash
+./run_project.sh
+```
+
+The script starts all required local services:
+
+- MongoDB on `mongodb://127.0.0.1:27017/`
+- FastAPI backend on `http://localhost:8000`
+- React frontend on `http://localhost:5173`
+
+It also opens the frontend in your browser.
+
+MongoDB data and logs are stored locally under:
+
+```text
+.local/mongodb/data
+.local/mongodb/log/mongod.log
+```
+
+Backend API documentation is available at:
+
+```text
+http://localhost:8000/docs
+```
+
+If this is the first time running the project, make sure dependencies were installed once:
 
 ```bash
 cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-```
 
-Run the API server:
-
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-The backend will be available at:
-
-```text
-http://localhost:8000
-```
-
-API documentation is available at:
-
-```text
-http://localhost:8000/docs
-```
-
-## Frontend Setup
-
-Open a second terminal from the repository root:
-
-```bash
-cd web
+cd ../web
 npm install
-npm run dev
 ```
 
-The frontend will be available at:
-
-```text
-http://localhost:5173
-```
-
-The frontend expects the backend API to run on:
-
-```text
-http://localhost:8000
-```
-
-## Quick Start Script
-
-The repository includes a local helper script:
+After that, day-to-day startup only needs:
 
 ```bash
 ./run_project.sh
 ```
 
-This script starts the backend and frontend in separate `gnome-terminal` windows and opens the browser at `http://localhost:5173`.
+## Startup Script
 
-Note: this script is intended for a local Linux desktop environment with `gnome-terminal` and `xdg-open` installed.
+`run_project.sh` performs these steps:
+
+- Creates local MongoDB data/log directories if needed.
+- Starts `mongod` with `--dbpath .local/mongodb/data`.
+- Starts the FastAPI backend in a new terminal.
+- Starts the React frontend in a new terminal.
+- Opens `http://localhost:5173`.
+
+Note: this script is intended for a local Linux desktop environment with `gnome-terminal`, `mongod`, `mongosh`, and `xdg-open` installed.
+
+If MongoDB fails to start, check `.local/mongodb/log/mongod.log`.
 
 ## API Endpoints
 
@@ -286,4 +288,3 @@ Validation metrics saved in the model metadata:
 - Frontend API base URL is currently hardcoded in `web/src/api/predictApi.js`.
 - Model folders are required at runtime. If no valid model folder is found, the API returns an error instead of predictions.
 - The repository `.gitignore` ignores model/checkpoint folders, so model weight tracking should be decided deliberately before publishing.
-
