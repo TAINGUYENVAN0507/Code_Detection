@@ -270,6 +270,76 @@ Validation metrics saved in the model metadata:
 - The selected programming language is currently included in the response but is not used by the model inference logic.
 - The backend truncates input to 512 tokens during model inference.
 
+## Public Deployment
+
+To make the app usable by anyone with a link, deploy three parts:
+
+- Frontend: deploy the `web/` Vite app to a static hosting service.
+- Backend: deploy the `backend/` FastAPI app to a Python server with enough memory for the model files.
+- Database: use a public MongoDB service such as MongoDB Atlas instead of local `mongod`.
+
+### Backend Environment Variables
+
+Set these variables on the backend hosting service:
+
+```text
+MONGODB_URL=<your MongoDB Atlas connection string>
+MONGODB_DB_NAME=code_detection
+JWT_SECRET_KEY=<long random secret>
+CORS_ALLOW_ORIGINS=<your frontend public URL>
+```
+
+Example:
+
+```text
+CORS_ALLOW_ORIGINS=https://your-app.example.com
+```
+
+Backend start command:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
+```
+
+If the platform does not provide `$PORT`, use:
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Important: the backend needs the model folders under `backend/models/`. Because `.gitignore` currently ignores model folders, make sure the deployment platform receives these files through one of these approaches:
+
+- commit or upload the model files intentionally,
+- attach persistent storage containing `backend/models/`,
+- or download/copy the model files during the deploy process.
+
+### Frontend Environment Variables
+
+Set this variable for the frontend deployment:
+
+```text
+VITE_API_BASE_URL=<your backend public URL>
+```
+
+Example:
+
+```text
+VITE_API_BASE_URL=https://your-api.example.com
+```
+
+Frontend build command:
+
+```bash
+npm install
+npm run build
+```
+
+Frontend output directory:
+
+```text
+dist
+```
+
 ## Planned Improvements
 
 - Restore persistent history loading after page refresh.
@@ -284,7 +354,7 @@ Validation metrics saved in the model metadata:
 
 ## Development Notes
 
-- Backend CORS currently allows `http://localhost:5173` and `http://127.0.0.1:5173`.
-- Frontend API base URL is currently hardcoded in `web/src/api/predictApi.js`.
+- Backend CORS is configured by `CORS_ALLOW_ORIGINS`.
+- Frontend API base URL is configured by `VITE_API_BASE_URL`.
 - Model folders are required at runtime. If no valid model folder is found, the API returns an error instead of predictions.
 - The repository `.gitignore` ignores model/checkpoint folders, so model weight tracking should be decided deliberately before publishing.

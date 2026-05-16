@@ -1,6 +1,6 @@
 import axios from "axios";
+import { API_BASE_URL } from "./config";
 
-const API_BASE_URL = "http://localhost:8000";
 const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
 

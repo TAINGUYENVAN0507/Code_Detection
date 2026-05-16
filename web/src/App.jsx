@@ -13,7 +13,9 @@ function ProtectedRoute({ user, children }) {
 }
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState(() => getStoredAuth()?.user || null);
+  const [currentUser, setCurrentUser] = useState(
+    () => getStoredAuth()?.user || null,
+  );
 
   function handleLogout() {
     clearAuth();

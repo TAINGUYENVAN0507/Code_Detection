@@ -11,7 +11,7 @@ from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError, PyMongoError
 
 
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017/")
+MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://127.0.0.1:27017/")
 MONGODB_DB_NAME = os.getenv("MONGODB_DB_NAME", "code_detection")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-this-secret-key")
 JWT_ALGORITHM = "HS256"
