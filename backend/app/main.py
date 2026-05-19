@@ -3,25 +3,14 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
-from app.auth_service import (
-    authenticate_user,
-    create_access_token,
-    create_user,
-    get_current_user,
-    serialize_user,
-)
 from app.model_service import ModelService
 from app.schemas import (
-    AuthResponse,
     PredictAllRequest,
     PredictAllResponse,
-    UserCreate,
-    UserLogin,
-    UserResponse,
 )
 
 
@@ -63,40 +52,8 @@ def health():
     }
 
 
-@app.post("/auth/register", response_model=AuthResponse)
-def register(request: UserCreate):
-    if request.password != request.re_password:
-        raise HTTPException(status_code=400, detail="Passwords do not match")
-
-    user = create_user(request.username, request.email, request.password)
-    token = create_access_token(str(user["_id"]))
-
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user": serialize_user(user),
-    }
-
-
-@app.post("/auth/login", response_model=AuthResponse)
-def login(request: UserLogin):
-    user = authenticate_user(request.username, request.password)
-    token = create_access_token(str(user["_id"]))
-
-    return {
-        "access_token": token,
-        "token_type": "bearer",
-        "user": serialize_user(user),
-    }
-
-
-@app.get("/auth/me", response_model=UserResponse)
-def me(current_user=Depends(get_current_user)):
-    return serialize_user(current_user)
-
-
 @app.post("/predict-all", response_model=PredictAllResponse)
-def predict_all(request: PredictAllRequest, current_user=Depends(get_current_user)):
+def predict_all(request: PredictAllRequest):
     if not request.code.strip():
         raise HTTPException(status_code=400, detail="Code is empty")
 
@@ -112,7 +69,7 @@ def predict_all(request: PredictAllRequest, current_user=Depends(get_current_use
 
 
 @app.post("/predict-all-json")
-def predict_all_json(request: PredictAllRequest, current_user=Depends(get_current_user)):
+def predict_all_json(request: PredictAllRequest):
     if not request.code.strip():
         raise HTTPException(status_code=400, detail="Code is empty")
 

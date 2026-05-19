@@ -21,13 +21,9 @@ function createId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-function createHistoryKey(user) {
-  return user?.username ? `analyze_history_${user.username}` : "analyze_history";
-}
-
-function readSavedHistory(historyKey) {
+function readSavedHistory() {
   try {
-    const savedHistory = localStorage.getItem(historyKey);
+    const savedHistory = localStorage.getItem("analyze_history");
 
     if (!savedHistory) {
       return [];
@@ -138,12 +134,11 @@ function createPdfReport(result) {
   return pdf;
 }
 
-export default function AnalyzePage({ currentUser, onLogout }) {
-  const historyKey = createHistoryKey(currentUser);
+export default function AnalyzePage() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("python");
   const [result, setResult] = useState(null);
-  const [history, setHistory] = useState(() => readSavedHistory(historyKey));
+  const [history, setHistory] = useState(readSavedHistory);
   const [downloadFormat, setDownloadFormat] = useState("json");
   const [rawJsonVisible, setRawJsonVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -151,7 +146,7 @@ export default function AnalyzePage({ currentUser, onLogout }) {
 
   function saveHistory(newHistory) {
     setHistory(newHistory);
-    localStorage.setItem(historyKey, JSON.stringify(newHistory));
+    localStorage.setItem("analyze_history", JSON.stringify(newHistory));
   }
 
   function addHistoryItem(data) {
@@ -249,12 +244,6 @@ export default function AnalyzePage({ currentUser, onLogout }) {
         <header className="header">
           <div>
             <h1>AI Code Detector</h1>
-            <div className="user-bar">
-              <span>{currentUser?.username}</span>
-              <button type="button" onClick={onLogout}>
-                Logout
-              </button>
-            </div>
           </div>
         </header>
 

@@ -5,9 +5,3 @@ transformers
 safetensors
 pydantic
 python-multipart
-sqlalchemy
-passlib[bcrypt]
-python-jose[cryptography]
-email-validator
-pymongo
-bcrypt

@@ -4,7 +4,7 @@ AI Code Detector is a web application and API for analyzing whether a source-cod
 
 ## Current Status
 
-This repository is an active development project. The core backend inference API and React web interface are implemented. Authentication, Docker deployment, file upload, batch scanning, and span-level highlighting are planned but not implemented yet.
+This repository is an active development project. The core backend inference API and React web interface are implemented. Authentication, user storage, Docker deployment, file upload, batch scanning, and span-level highlighting are not included in the current version.
 
 ## Features
 
@@ -93,8 +93,6 @@ backend/models/unixcoder_subtask_c/best_model
 - Python 3.11 or newer
 - Node.js 20 or newer
 - npm
-- MongoDB server with the `mongod` command available
-- `mongosh`
 - `gnome-terminal`
 - `xdg-open`
 - Local model files under `backend/models/`
@@ -109,18 +107,10 @@ From the repository root, run:
 
 The script starts all required local services:
 
-- MongoDB on `mongodb://127.0.0.1:27017/`
 - FastAPI backend on `http://localhost:8000`
 - React frontend on `http://localhost:5173`
 
 It also opens the frontend in your browser.
-
-MongoDB data and logs are stored locally under:
-
-```text
-.local/mongodb/data
-.local/mongodb/log/mongod.log
-```
 
 Backend API documentation is available at:
 
@@ -150,15 +140,11 @@ After that, day-to-day startup only needs:
 
 `run_project.sh` performs these steps:
 
-- Creates local MongoDB data/log directories if needed.
-- Starts `mongod` with `--dbpath .local/mongodb/data`.
 - Starts the FastAPI backend in a new terminal.
 - Starts the React frontend in a new terminal.
 - Opens `http://localhost:5173`.
 
-Note: this script is intended for a local Linux desktop environment with `gnome-terminal`, `mongod`, `mongosh`, and `xdg-open` installed.
-
-If MongoDB fails to start, check `.local/mongodb/log/mongod.log`.
+Note: this script is intended for a local Linux desktop environment with `gnome-terminal` and `xdg-open` installed.
 
 ## API Endpoints
 
@@ -272,20 +258,16 @@ Validation metrics saved in the model metadata:
 
 ## Public Deployment
 
-To make the app usable by anyone with a link, deploy three parts:
+To make the app usable by anyone with a link, deploy two parts:
 
 - Frontend: deploy the `web/` Vite app to a static hosting service.
 - Backend: deploy the `backend/` FastAPI app to a Python server with enough memory for the model files.
-- Database: use a public MongoDB service such as MongoDB Atlas instead of local `mongod`.
 
 ### Backend Environment Variables
 
 Set these variables on the backend hosting service:
 
 ```text
-MONGODB_URL=<your MongoDB Atlas connection string>
-MONGODB_DB_NAME=code_detection
-JWT_SECRET_KEY=<long random secret>
 CORS_ALLOW_ORIGINS=<your frontend public URL>
 ```
 
@@ -344,7 +326,7 @@ dist
 
 - Restore persistent history loading after page refresh.
 - Add rename, delete, and pin actions for history items.
-- Add user authentication and server-side saved history.
+- Add optional server-side saved history.
 - Add confidence calibration.
 - Add line-level or block-level hybrid highlighting.
 - Add file upload and batch analysis.
