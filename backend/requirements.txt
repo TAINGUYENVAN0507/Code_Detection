@@ -5,3 +5,5 @@ transformers
 safetensors
 pydantic
 python-multipart
+scikit-learn
+accelerate

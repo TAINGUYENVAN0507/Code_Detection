@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -97,3 +98,8 @@ def predict_all_json(request: PredictAllRequest):
         media_type="application/json",
         filename=output_path.name,
     )
+
+static_dir = Path(__file__).resolve().parent.parent / "static"
+
+if static_dir.exists():
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
